@@ -1,0 +1,67 @@
+import React,{useState} from 'react'
+import {Link,useNavigate} from 'react-router-dom'
+import axios from 'axios'
+const Navbar = ({}) => {
+    const[css,setCss]=useState('none')
+    const [data,setData]=useState()
+    const navigate = useNavigate();
+    const myStyle={
+        display:css
+    }
+    const onSearch=async(e)=>{
+      const searchtxt=e.target.search.value;
+      const arr = searchtxt.split(" ");
+      for (var i = 0; i < arr.length; i++) {
+        arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1);}
+        const str2 = arr.join(" ");
+        console.log('search')
+        e.preventDefault()
+        axios.post('http://localhost:5000/search', {
+          
+          search:str2,
+        })
+        .then(function (response) {
+            console.log(response)
+            setData(response.data)
+            })
+          .catch(function (error) {
+            console.log(error);
+          });
+          navigate('/search')
+      }
+
+
+
+  return (
+    <div>
+    <nav>
+        <div className="navl">
+            <h1>Movie<span>corn</span></h1>
+        </div>
+        <div className="navm">
+            <Link to="/">Home  <div className='line'></div></Link><Link to="/movies">Movies  <div className='line'></div></Link><Link to="/movies">Tv Shows <div className='line'></div></Link><Link to='/watchlist'>Watchlist <div className='line'></div></Link>
+        </div>
+        <div className="navr">
+            <form onSubmit={onSearch} className="search">
+                <input type="text" name='search'  />
+                <button><span className="material-symbols-outlined">search</span></button>
+            </form>
+            <span onClick={()=>setCss("flex")} className="material-symbols-outlined">menu</span>
+             </div>
+
+             
+    </nav>
+    <div className='overlay' style={myStyle}>
+      <div className="user">
+      <span onClick={()=>setCss("none")} className="material-symbols-outlined">close</span>
+        <img src="https://images.pexels.com/photos/7505197/pexels-photo-7505197.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load" alt="" />
+        <h3>Gaganrider</h3>
+        <Link to='/watchlist'>Watchlist</Link>
+        <button>Signout</button>
+      </div>
+    </div>
+    </div>
+  )
+}
+
+export default Navbar
